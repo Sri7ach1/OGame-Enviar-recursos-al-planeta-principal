@@ -31,6 +31,8 @@ Este script de Tampermonkey permite enviar automáticamente recursos desde tus c
 3. Selecciona tu planeta principal del menú desplegable.
 4. Especifica el número de naves de carga grandes que deseas usar para el transporte.
 5. Haz clic en "📦 Enviar a Principal" para iniciar el proceso.
+6. Para ocultar la interfaz, haz clic en el botón "✖" en la esquina superior derecha del panel.
+7. Para volver a mostrar la interfaz, haz clic en la opción "📦 Enviar Recursos" que aparecerá en el menú lateral izquierdo.
 
 ## Características
 
@@ -38,12 +40,22 @@ Este script de Tampermonkey permite enviar automáticamente recursos desde tus c
 - Permite seleccionar el planeta principal
 - Configurable número de naves de carga grandes
 - Interfaz intuitiva y fácil de usar
+- Posibilidad de ocultar la interfaz cuando no se utiliza
+- Integración con el menú lateral del juego para mostrar la interfaz nuevamente
+- Mantiene el estado de visibilidad entre sesiones
 
 ## Notas
 
 - Asegúrate de tener suficientes naves de carga grandes en cada colonia
 - El script respeta los tiempos de carga de la página para evitar errores
 - Los datos de configuración se guardan en el almacenamiento local del navegador
+
+## Actualizaciones recientes
+
+### Versión 1.1
+- Añadida la funcionalidad para ocultar la interfaz cuando no se utiliza
+- Integración con el menú lateral del juego para mostrar nuevamente la interfaz
+- Mejoras visuales y de usabilidad
 
 ## Soporte
 

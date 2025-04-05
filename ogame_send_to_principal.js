@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         OGame - Enviar recursos al planeta principal
 // @namespace    https://github.com/Sri7ach1
-// @version      1.0
+// @version      1.1
 // @description  Enviar recursos al planeta principal
 // @author       Sri7ach1
 // @match        https://*.ogame.gameforge.com/game/index.php?page=*
@@ -29,6 +29,14 @@
 
     function setShipsToSend(amount) {
         localStorage.setItem('ogameShipsToSend', amount);
+    }
+
+    function isInterfaceHidden() {
+        return localStorage.getItem('ogameInterfaceHidden') === 'true';
+    }
+
+    function setInterfaceHidden(hidden) {
+        localStorage.setItem('ogameInterfaceHidden', hidden.toString());
     }
 
     function identifyPlanets() {
@@ -228,8 +236,83 @@
         return state ? JSON.parse(state) : null;
     }
 
+    function hideInterface() {
+        const container = document.getElementById('ogameAutoTransportContainer');
+        if (container) {
+            container.style.display = 'none';
+            setInterfaceHidden(true);
+            showFloatingButton();
+        }
+    }
+
+    function showInterface() {
+        const container = document.getElementById('ogameAutoTransportContainer');
+        const menuItem = document.getElementById('ogameFloatingButton');
+        
+        if (container) {
+            container.style.display = 'block';
+            setInterfaceHidden(false);
+        }
+        
+        if (menuItem) {
+            menuItem.remove();
+        }
+    }
+
+    function showFloatingButton() {
+        // Eliminar botón existente si hay alguno
+        const existingBtn = document.getElementById('ogameFloatingButton');
+        if (existingBtn) {
+            existingBtn.remove();
+        }
+
+        // Buscar el menú lateral
+        const leftMenu = document.querySelector('ul.leftmenu');
+        if (!leftMenu) {
+            console.error('No se encontró el menú lateral');
+            return;
+        }
+
+        // Crear un nuevo elemento de menú
+        const menuItem = document.createElement('li');
+        menuItem.id = 'ogameFloatingButton';
+        
+        // Crear un elemento similar a los otros elementos del menú
+        const menuLink = document.createElement('a');
+        menuLink.href = '#';
+        menuLink.className = 'menubutton';
+        menuLink.title = 'Mostrar panel de envío de recursos';
+        
+        // Añadir el icono
+        const span = document.createElement('span');
+        span.className = 'menu_icon';
+        span.innerHTML = '📦';
+        span.style.fontSize = '15px';
+        
+        menuLink.appendChild(span);
+        menuLink.innerHTML += ' Enviar Recursos';
+        
+        menuLink.onclick = (e) => {
+            e.preventDefault();
+            showInterface();
+            menuItem.remove();
+        };
+        
+        menuItem.appendChild(menuLink);
+        
+        // Insertar el nuevo elemento al final del menú
+        leftMenu.appendChild(menuItem);
+    }
+
     function createButton() {
+        // Eliminar container existente si hay alguno
+        const existingContainer = document.getElementById('ogameAutoTransportContainer');
+        if (existingContainer) {
+            existingContainer.remove();
+        }
+
         const container = document.createElement('div');
+        container.id = 'ogameAutoTransportContainer';
         container.style = `
             position: fixed;
             top: 50px;
@@ -238,7 +321,40 @@
             background: rgba(0,0,0,0.8);
             padding: 10px;
             border-radius: 5px;
+            ${isInterfaceHidden() ? 'display: none;' : ''}
         `;
+
+        const header = document.createElement('div');
+        header.style = `
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #3e3e3e;
+            padding-bottom: 5px;
+        `;
+
+        const title = document.createElement('div');
+        title.textContent = 'Enviar recursos';
+        title.style = `
+            color: white;
+            font-weight: bold;
+        `;
+
+        const hideBtn = document.createElement('button');
+        hideBtn.innerHTML = '✖';
+        hideBtn.title = 'Ocultar panel';
+        hideBtn.style = `
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 14px;
+        `;
+        hideBtn.onclick = hideInterface;
+
+        header.appendChild(title);
+        header.appendChild(hideBtn);
 
         const selectContainer = document.createElement('div');
         selectContainer.style.marginBottom = '10px';
@@ -331,10 +447,16 @@
             }
         };
 
+        container.appendChild(header);
         container.appendChild(selectContainer);
         container.appendChild(inputContainer);
         container.appendChild(btn);
         document.body.appendChild(container);
+        
+        // Si la interfaz debe estar oculta, mostrar el botón flotante
+        if (isInterfaceHidden()) {
+            showFloatingButton();
+        }
     }
 
     async function init() {
